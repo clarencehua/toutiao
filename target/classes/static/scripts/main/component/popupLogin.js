@@ -81,7 +81,7 @@
                 }
                 var oData = that.val();
                 $.ajax({
-                    url: '/reg',
+                    url: '/reg/',
                     type: 'post',
                     dataType: 'json',
                     data: {

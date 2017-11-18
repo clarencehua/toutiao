@@ -6,6 +6,7 @@ import com.nowcoder.model.LoginTicket;
 import com.nowcoder.model.User;
 import com.nowcoder.utils.StringUtil;
 import com.nowcoder.utils.ToutiaoUtil;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,5 +67,33 @@ public class UserService {
     }
     public void logout(String ticket) {
         loginTicketDAO.updateStatus(ticket, 1);
+    }
+    public Map<String, Object> login(String username, String password) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (StringUtils.isBlank(username)) {
+            map.put("msgname", "用户名不能为空");
+            return map;
+        }
+
+        if (StringUtils.isBlank(password)) {
+            map.put("msgpwd", "密码不能为空");
+            return map;
+        }
+
+        User user = userDAO.selectByName(username);
+
+        if (user == null) {
+            map.put("msgname", "用户名不存在");
+            return map;
+        }
+
+        if (!ToutiaoUtil.MD5(password+user.getSalt()).equals(user.getPassword())) {
+            map.put("msgpwd", "密码不正确");
+            return map;
+        }
+
+        String ticket = addLoginTicket(user.getId());
+        map.put("ticket", ticket);
+        return map;
     }
 }
