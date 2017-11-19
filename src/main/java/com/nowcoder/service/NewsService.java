@@ -24,7 +24,13 @@ public class NewsService {
     public List<News> getLatestNews(int userId, int offset, int limit) {
         return newsDAO.selectByUserIdAndOffset(userId, offset, limit);
     }
-
+    public int addNews(News news){
+        newsDAO.addNews(news);
+        return news.getId();
+    }
+    public News getById(int newsId) {
+        return newsDAO.getById(newsId);
+    }
     public String saveImage(MultipartFile file) throws Exception{
         int dotPos=file.getOriginalFilename().lastIndexOf(".");
         if (dotPos<0){
@@ -38,5 +44,9 @@ public class NewsService {
         Files.copy(file.getInputStream(), new File(ToutiaoUtil.IMAGE_DIR + fileName).toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
         return ToutiaoUtil.TOUTIAO_DOMAIN + "image/?name=" + fileName;
+    }
+
+    public int updateCommentCount(int id, int count) {
+        return newsDAO.updateCommentCount(id, count);
     }
 }
